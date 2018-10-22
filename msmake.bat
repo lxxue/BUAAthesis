@@ -31,7 +31,7 @@ goto help
 :: 编译我的论文
 ::======================================
 :thesis
-echo 正在编译文件
+echo compling
 if not exist buaathesis.cls goto clserr
 if not exist buaathesis.bst goto bsterr
 if /i {%1}=={bachelor} set mythesis=sample-bachelor
@@ -40,7 +40,7 @@ if /i {%1}=={master} set mythesis=sample-master
 call xelatex %mythesis%
 if {%2}=={full} (goto full)
 if errorlevel 1 goto myerr1
-echo 成功生成论文
+echo success!
 call %mythesis%.pdf
 goto end
 :full
@@ -50,7 +50,7 @@ call bibtex %mythesis%
 if not exist %mythesis%.bbl goto biberr
 call xelatex %mythesis%
 call xelatex %mythesis%
-echo 成功生成论文
+echo success!
 call %mythesis%.pdf
 goto end
 
@@ -58,7 +58,7 @@ goto end
 :: 清除文件以及清除更多文件
 ::======================================
 :clean
-echo 删除编译临时文件
+echo delete temp files
 del /f /q /s *.log *.glo *.ilg *.lof *.ind *.out *.thm *.toc *.lot *.loe *.out.bak *.blg *.synctex.gz
 del /f /q *.idx
 del /f /s *.dvi *.ps
@@ -76,15 +76,15 @@ goto end
 :: 帮助信息
 ::======================================
 :help
-echo            输入msmake+下面的命令，选择进入相应操作
-echo                如输入命令“msmake bachelor”
-echo        msmake参数             说明
-echo     bachelor/master       生成我的论文
-echo	    clean                 清除生成的多余文件
-echo	    help                  显示本帮助信息
-echo     bachelor/master full  为首次或运行"clean more"命令后使用
-echo	    clean more            将清除所有当前目录下的无关文件
-echo 注意：所需编译的文件名必须是sample-bachelor.tex或sample-master.tex
+::echo            输入msmake+下面的命令，选择进入相应操作
+::echo                如输入命令“msmake bachelor”
+echo     msmake parameters        explanation          
+echo     bachelor/master          compile my files
+echo     clean                    delete extra files
+echo     help                     display help
+echo     bachelor/master full     used when first compile it or after clean more
+echo     clean more               delete irrelevant files in current directory
+echo Caution: the filename must be sample-bachelor.tex or sample-master.tex
 :: 忍不住吐槽，为了显示对齐，居然排得这么乱！
 goto end
 
@@ -92,16 +92,16 @@ goto end
 :: 运行错误信息
 ::======================================
 :myerr1
-echo 唉呀，生成论文失败了呢
+echo fail to compile
 goto end
 :biberr
-echo 貌似木有参考文献数据库吧
+echo bib not found
 goto end
 :clserr
-echo 居然连cls模板都木有！闹哪样！
+echo cls not found
 goto end
 :bsterr
-echo 居然连bst的参考文献样式都木有！闹哪样！
+echo bst not found
 goto end
 
 ::======================================
