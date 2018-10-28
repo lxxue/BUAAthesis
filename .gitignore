@@ -33,3 +33,7 @@
 *.thm
 *.pdf
 .DS_Store
+
+
+
+*.bib.*

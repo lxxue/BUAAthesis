@@ -112,7 +112,7 @@ The LaTeX template for thesis of BUAA]
     \ifbuaa@bachelor
         \fancyhead[C]{
             \includegraphics[width=37bp]{figure/buaamark.eps}\hfill
-            \raisebox{2ex}{\heiti\zihao{4}\buaa@university 毕业设计(论文)}\hfill
+            \raisebox{2ex}{\heiti\zihao{4}\buaa@university 毕业设计(开题报告)}\hfill
             \raisebox{2ex}{\songti\zihao{5}第\quad\thepage\quad 页}
         }
     \else
@@ -520,7 +520,7 @@ The LaTeX template for thesis of BUAA]
             \begin{center}
                 \includegraphics[width=360bp]{figure/buaaname.eps}
                 \vskip 45bp
-                \centerline{\zihao{-0}\heiti 毕业设计(论文)}
+                \centerline{\zihao{-0}\heiti 毕业设计(开题报告)}
                 ~~\\
                 \vspace*{\stretch{4}}
                 \begin{minipage}[h]{.8\textwidth}
@@ -537,14 +537,14 @@ The LaTeX template for thesis of BUAA]
                     \ifbuaa@twoteacher
                         \begin{tabular}{cc}
                             学~~~院~~~名~~~称~~&\ulinecvcbc{\buaa@school 学院}\\[.4ex]
-                            专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major 专业}\\[.4ex]
+                            专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major}\\[.4ex]
                             学~~~生~~~姓~~~名~~&\ulinecvcbc{\buaa@thesisauthor}\\[.4ex]
                             指~~~导~~~教~~~师~~&\ulinecvcbc{\buaa@teacher \quad \buaa@subteacher}\\
                         \end{tabular}
                     \else
                         \begin{tabular}{cc}
                             学~~~院~~~名~~~称~~&\ulinecvcbc{\buaa@school 学院}\\[.4ex]
-                            专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major 专业}\\[.4ex]
+                            专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major}\\[.4ex]
                             学~~~生~~~姓~~~名~~&\ulinecvcbc{\buaa@thesisauthor}\\[.4ex]
                             指~~~导~~~教~~~师~~&\ulinecvcbc{\buaa@teacher}\\
                         \end{tabular}
