@@ -1,82 +1,64 @@
 % !Mode:: "TeX:UTF-8"
-\chapter{简介}
 
-\section{项目说明}
+\chapter{研究背景}
 
-欢迎使用北京航空航天大学毕业设计论文毕业设计论文\LaTeX{}模板，
-本模板由北航开源俱乐部(BHOSC)维护，根据北京航空航天大学教务处的
-本科生毕业设计论文要求和研究生毕业设计论文要求来编写的。
+	近年来，得益于算法的改进和算力的提升，神经网络在物体识别\cite{NIPS2012_4824}、目标检测\cite{girshick15fastrcnn}、语义分割\cite{Long_2015_CVPR}等计算机视觉的传统任务中取得了突破性进展。随后，神经网络在自然语言处理\cite{NIPS2014_5346}和强化学习\cite{44806}等领域也取得了不错的进展。工业界也已经将神经网络应用于自动驾驶、健康医疗、智慧城市等领域。
+	
+	相应的，神经网络模型的安全性以及带来的隐私问题也逐渐受到人们的关注。\citet{szegedy2014intriguing}首次发现在图片分类的任务上，通过对输入图片进行特定的微小修改，原本预测正确的深度神经网络就会输出完全不一样的标签。这些改动小到可能无法被人察觉\cite{carlini2017towards}，相应的被修改的样本就被称作对抗样本。更严重的是，由一个模型生成的对抗样本，被发现可以迁移到其他模型上，即让其他模型也产生错误的预测结果。\citet{sinha2018certifiable}甚至发现可以在物理世界中生成稳定的对抗样本，用于攻击Faster R-CNN\cite{NIPS2015_5638}和YOLO\cite{Redmon_2016_CVPR}这两个在工业界得到大规模应用的目标检测算法。如果自动驾驶汽车在对抗样本的影响下，无法识别出一个停车的指示牌，后果将不堪设想。
+	
+	因此，我们若想将神经网络模型应用于自动驾驶、恶意软件检测、物联网等安全性及其重要的领域，神经网络的安全性与稳定性是一个重要的研究课题。
 
-目前本模板支持本科、(学术/专业)硕士和博士研究生毕业设计论文要求规范。
+\vspace{\baselineskip}
+{\let\clearpage\relax \chapter{相关工作}}
+\section{对抗样本攻击}
+本文仅考虑在图像分类上的对抗样本攻击算法。
 
-本模板在编写过程中尽可能满足学校要求，但是由于原始规范主要针对Word。
-和\LaTeX{}之间不可避免的差异加之编写者的水平限制，本模板很难做到完全一致。
-我们十分欢迎北航的\LaTeX{}爱好者/专家参与到本模板的完善工作中，
-希望本模板能够对各位同学的论文撰写工作提供便利，
-感谢您对我们工作的信任以及任何可能的反馈和贡献。
-如果您对开发和完善本模板\,BUAAthesis.cls\,有兴趣，
-或者有任何想法和建议，请与我们联系！
+\citet{szegedy2014intriguing}将对抗样本的生成形式化为如下优化问题
+\begin{align}
+\min_{\bm{\rho}} c\lVert \bm{\rho} \rVert + \mathcal{L}(\bm{I}_c + \rho, \ell) \text{\quad s.t. } \bm{I}_c + \rho \in [0,1]^m,
+\end{align}
+其中$\bm{\rho}$为扰动，$\bm{I}_c$为原图像，$\ell$为攻击者希望网络所输出的结果，$\bm{\mathcal{L}}(\cdot , \cdot)$为衡量分类器好坏的损失函数。\citet{szegedy2014intriguing}使用Box-constrained L-BFGS算法求得扰动$\rho$的近似解，将其加到原图像上即得到对抗样本。此外，\citet{szegedy2014intriguing}还这些对抗样本的可迁移性，即由一个神经网络模型产生的对抗样本，能以不小的可能性来“骗过”另一个完成同样任务的网络模型，即使新模型的架构、训练算法、训练集与原模型完全不同。为了防御对抗样本，\citet{szegedy2014intriguing}也提出了对抗训练算法，即在训练的过程中生成对抗样本并把它加入训练集中用于训练，从而显式地提高模型的稳定性。
 
-{\heiti 注意：}本模板在尽可能满足学校要求的同时，在细节处理上，
-倾向于遵从\LaTeX{}排版规范，避免使用奇怪的宏包和编写者认为不规范的设置。
-所以难免和学校提供的基于Word的样张存在细微差异，请谨慎使用！
+对抗训练过程中，对抗样本在不断生成。而Box-contrained L-BFGS算法为二阶算法，求解速度较慢。因此，\cite{szegedy2014intriguing}中的对抗训练效率较低。为了加速训练过程中对抗样本的生成，\citet{goodfellow2015explaining}提出了基于梯度的对抗样本生成算法，即
+\begin{align}
+\bm{\rho} = \epsilon \text{sign} (\nabla_{\bm{I}_c} \mathcal{L} (\bm{\theta}, \bm{I}_c, \ell)),
+\end{align}
+其中$\epsilon$为每个像素的最大扰动值，$\bm{\theta}$为神经网络的参数，$\nabla_{\bm{I}_c} \mathcal{L} (\bm{\theta}, \bm{I}_c, \ell)$为损失函数基于输入图像的梯度。利用反向传播算法，对抗样本生成的开销很小。使用符号函数是因为该算法是在$\ell_\infty$的范数下进行优化。\citet{goodfellow2015explaining}使用在损失函数附近的线性近似来得到对抗样本效果不错，说明神经网络的局部可能没有我们所想象的那样非线性。
 
-\section{相关信息}
+以上所谈到的都是单步算法，即只对输入图像进行一次扰动的算法。\citet{kurakin2016adversarial}提出了基于Projected Gradient Descent的Basic Iterative Method:
+\begin{align}
+\bm{I}_\rho^{i+1} = \text{Clip}_\epsilon \{\bm{I}_\rho^i + \alpha \text{sign} (\nabla_{\bm{I}_c} \mathcal{L} (\bm{\theta}, \bm{I}_c, \ell))\},
+\end{align}
+其中$\bm{I}_\rho^i$表示在经过$i$次迭代后的对抗样本。$\text{Clip}\{\cdot\}$将对抗样本限制在$\ell_\infty$范数下的$B_\epsilon(\bm{I}_c)$内，$\alpha$表示学习速率。
 
-\subsection{模板维护及联系方式}
-\begin{tabular}{ll}
-    \multicolumn{2}{l}{北航开源俱乐部 BeiHang OpenSource Club (BHOSC)} \\
-    GoogleGroup & \url{https://groups.google.com/d/forum/BHOSC/} \\
-    Github      & \url{https://github.com/BHOSC/} \\
-    IRC         & \#beihang-osc @ FreeNode
+以上所谈到的算法都是计算针对$\ell_\infty$和$\ell_2$范数下的小扰动。
+\citet{papernot2016limitations}考虑在$\ell_0$范数下的小扰动，即尽可能地扰动较少的像素点。\citet{papernot2016limitations}基本思路是，通过函数的输出相对于输入图像的Jacobian矩阵，启发式地找出两个像素点进行攻击。经过多次迭代，直至攻击成功，或者修改像素数达到上限，攻击失败。\citet{su2017pixel}利用进化算法发现可以在仅仅改变一个像素的情况下完成成功率极高的攻击，并且被“欺骗”的网络对自己错误的预测的置信度还很高。
+
+\cite{papernot2016distillation}提出一种Distillation算法可以有效防御前面所谈到的\cite{szegedy2014intriguing}\cite{goodfellow2015explaining}\cite{papernot2016limitations}攻击。随后\citep{carlini2017towards}提出了三种算法，分别生成对应于$\ell_0,\ell_2,\ell_\infty$范数的对抗样本，从而将Distillation这一算法攻破。
+
+上述方法都是针对每一张图片生成特定的扰动。\citet{Moosavi-Dezfooli_2017_CVPR}发现可以通过将这些扰动叠加，得到一个较为通用的微小扰动，从而能在许多输入图片上产生对抗样本。此外，\citet{Moosavi-Dezfooli_2017_CVPR}还发现这样的微小扰动甚至能迁移到不同网络结构的模型上。
+
+\section{对抗样本防御}
+
+\vspace{\baselineskip}
+{\let\clearpage\relax \chapter{研究内容与解决方案}}
+
+\section{研究目标}
+
+\section{研究内容}
+
+\section{技术方案}
+
+\vspace{\baselineskip}
+{\let\clearpage\relax \chapter{研究难点}}
+
+\vspace{\baselineskip}
+{\let\clearpage\relax \chapter{预期结果}}
+
+\vspace{\baselineskip}
+{\let\clearpage\relax \chapter{进度安排}}
+\begin{tabular}{|l|l|}
+\hline
+a & b \\
+\hline
 \end{tabular}
-
-\subsection{代码托管及相关页面}
-\begin{itemize}
-    \item 毕业设计论文模板代码
-    \item[] \url{https://github.com/BHOSC/BUAAthesis/}
-    % TODO(huxuan): Others pages related to BUAAthesis
-    % \item 软件学院本科毕设答辩演示模板
-    % \item[] \url{https://github.com/huxuan/latex\_buaasoft\_bachelor\_slide}
-    % \item 研究生毕设综述报告和开题报告模板
-    % \item[] \url{https://github.com/JosephPeng/ZongshuKaiti\}
-\end{itemize}
-
-\subsection{贡献者}
-\begin{tabularx}{\textwidth}{@{\hspace{2em}}ll}
-    \href{https://github.com/JosephPeng/}{Joseph \footnote{目前的维护者}} &
-    \href{mailto:pengyongbuaa@gmail.com}{pengyongbuaa@gmail.com} \\
-    \href{http://huxuan.org/}{huxuan \textsuperscript{1}} &
-    \href{mailto:i@huxuan.org}{i@huxuan.org} \\
-\end{tabularx}
-
-\subsection{项目协议}
-本项目主要遵从以下两套协议
-\begin{itemize}
-    \item \href{http://www.gnu.org/licenses/gpl.txt}
-        {GNU General Public License (GPLv3)}
-    \item \href{http://www.latex-project.org/lppl.txt}
-        {\LaTeX{} Project Public License (LPPL)}
-\end{itemize}
-使用前请认真阅读相关协议，详情请见项目代码根目录下的 LICENSE 文件
-
-\section{免责声明}
-本模板为编写者依据北京航空航天大学研究生院及教务处出台的
-《北京航空航天大学研究生撰写学位论文规定（2009年7月修订）》和
-《本科生毕业设计（论文）撰写规范及要求》编写而成，
-旨在方便北京航空航天大学毕业生撰写学位论文使用。
-
-如前所述，本模板为北航开源俱乐部\LaTeX{}爱好者依据学校的要求规范编写，
-研究生院及教务处只提供毕业论文的写作规范，目前并未提供官方\LaTeX{}模板，
-也未授权第三方模板为官方模板，故此模板仅为论文规范的参考实现，
-不保证格式能完全满足审查老师要求。任何由于使用本模板而引起的论文格式等问题，
-以及造成的可能后果，均与本模板编写者无关。
-
-任何组织或个人以本模板为基础进行修改、扩展而生成新模板，请严格遵守相关协议。
-由于违反协议而引起的任何纠纷争端均与本模板编写者无关。
-
-\section{版本历史}
-\begin{itemize}
-    \item[1.0] 2012/07/24 已完成大体功能，说明文档和细节方面还有待完善。
-    % “a.b”为版本号，b为奇数时为内测版本，为偶数时为发行版。
-\end{itemize}

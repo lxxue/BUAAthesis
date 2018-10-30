@@ -1699,12 +1699,15 @@ FUNCTION {format.tr.number}
 FUNCTION {format.addr.pub}
 { publisher empty$
     {address empty$
-        { ".[S.l.]: [s.n.] " *}
-        { address ": [s.n.] " * }
+        %{ ".[S.l.]: [s.n.] " *}
+        %{ address ": [s.n.] " * }
+        { "" *}
+        { address "" * }
         if$
     }
     { address empty$
-        { ".[S.l.]: " * }
+        %{ ".[S.l.]: " * }
+        { "" * }
         { address ": " * }
         if$
         publisher *
@@ -1733,12 +1736,16 @@ FUNCTION {format.caddr.pub}
 FUNCTION {format.addr.institution}
 { institution empty$
     {address empty$
-        { ".[S.l.]: [s.n.] " *}
-        { address ": [s.n.] " * }
+        %{ ".[S.l.]: [s.n.] " *}
+        %{ address ": [s.n.] " * }
+        { "" *}
+        { address "" * }
         if$
     }
     { address empty$
-        { ".[S.l.]: " * }
+        %{ ".[S.l.]: " * }
+        %{ address ": " * }
+        { "" * }
         { address ": " * }
         if$
         institution *
@@ -1767,12 +1774,16 @@ FUNCTION {format.caddr.institution}
 FUNCTION {format.school.pub}
 { school empty$
     {address empty$
-        { "[S.l.]: [s.n.] " }
-        { address ": [s.n.] " * }
+        %{ "[S.l.]: [s.n.] " }
+        %{ address ": [s.n.] " * }
+        { "" }
+        { address ": " * }
         if$
     }
     { address empty$
-        { ".[S.l.]: " * }
+        %{ ".[S.l.]: " * }
+        %{ address ": " * }
+        { "" * }
         { address ": " * }
         if$
         school *
@@ -1805,12 +1816,15 @@ FUNCTION {format.inproceedings.addr.pub}
     TypeofLit empty$
     {publisher empty$
         {address empty$
-            { ".[S.l.]: [s.n.] " }
-            { address ": [s.n.] " * }
+            %{ ".[S.l.]: [s.n.] " }
+            %{ address ": [s.n.] " * }
+            { "" }
+            { address ": " * }
             if$
         }
         { address empty$
-            { ".[S.l.]: " * }
+            %{ ".[S.l.]: " * }
+            { "" * }
             { address ": " * }
             if$
             publisher *
@@ -1847,11 +1861,12 @@ FUNCTION {format.misc.addr.pub}
 { publisher empty$
     {address empty$
         { "" }
-        { address ": [s.n.] " * }
+        %{ address ": [s.n.] " * }
+        { address ": " * }
         if$
     }
     { address empty$
-        { "[S.l.]: " * }
+        %{ "[S.l.]: " * }
         { address ": " * }
         if$
         publisher *
@@ -1883,7 +1898,9 @@ FUNCTION {format.cmisc.addr.pub}
 
 FUNCTION {format.addr.pub.org}                              %  If there's an
 { address empty$                                            %  an organization
-    { "[S.l.]:" * publisher * ", for " * organization * }                 %  and a publisher
+    %{ "[S.l.]:" * publisher * ", for " * organization * }                 %  and a publisher
+    { "" * publisher * ", for " * organization * }
+    %{ "" * publisher * ", for " * organization * }
     { address ": " * publisher * ", for " * organization * }  %  too.
     if$
 }
@@ -1891,8 +1908,10 @@ FUNCTION {format.addr.pub.org}                              %  If there's an
 FUNCTION {format.addr.inst}
 { address empty$
     { institution empty$
-        { "[S.l.]" }
-        { "[S.l.]" * institution *}
+        %{ "[S.l.]" }
+        %{ "[S.l.]" * institution *}
+        { "" }
+        { "" * institution *}
         if$
     }
     { institution empty$

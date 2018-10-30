@@ -112,7 +112,7 @@ The LaTeX template for thesis of BUAA]
     \ifbuaa@bachelor
         \fancyhead[C]{
             \includegraphics[width=37bp]{figure/buaamark.eps}\hfill
-            \raisebox{2ex}{\heiti\zihao{4}\buaa@university 毕业设计(论文)}\hfill
+            \raisebox{2ex}{\heiti\zihao{4}\buaa@university 毕业设计(论文)开题报告}\hfill
             \raisebox{2ex}{\songti\zihao{5}第\quad\thepage\quad 页}
         }
     \else
@@ -153,12 +153,12 @@ The LaTeX template for thesis of BUAA]
 % 格式
 \ctexset{
     chapter={
-        format={\centering\zihao{3}\heiti},
+        format={\zihao{3}\heiti},
         nameformat={},
         aftername={\quad},
         titleformat={},
-        beforeskip={-.5\baselineskip},
-        afterskip={\baselineskip},
+        beforeskip={-0.5\baselineskip},
+        afterskip={0.5\baselineskip},
     },
     section={
         aftername={\quad},
@@ -543,7 +543,7 @@ The LaTeX template for thesis of BUAA]
                         \end{tabular}
                     \else
                         \begin{tabular}{cc}
-                            学~~~院~~~名~~~称~~&\ulinecvcbc{\buaa@school 学院}\\[.4ex]
+                            学~~~院~~~名~~~称~~&\ulinecvcbc{\buaa@school}\\[.4ex]
                             专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major 专业}\\[.4ex]
                             学~~~生~~~姓~~~名~~&\ulinecvcbc{\buaa@thesisauthor}\\[.4ex]
                             指~~~导~~~教~~~师~~&\ulinecvcbc{\buaa@teacher}\\
