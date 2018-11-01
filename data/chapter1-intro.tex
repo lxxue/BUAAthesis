@@ -11,7 +11,7 @@
 \vspace{\baselineskip}
 {\let\clearpage\relax \chapter{相关工作}}
 \section{对抗样本攻击}
-本文仅考虑在图像分类上的对抗样本攻击算法。
+暂时仅考虑在图像分类上的对抗样本攻击算法。已经发现在目标检测、语义分割、自然语言处理以及强化学习等任务中都存在对抗样本的问题。
 
 \citet{szegedy2014intriguing}将对抗样本的生成形式化为如下优化问题
 \begin{align}
@@ -23,7 +23,7 @@
 \begin{align}
 \bm{\rho} = \epsilon \text{sign} (\nabla_{\bm{I}_c} \mathcal{L} (\bm{\theta}, \bm{I}_c, \ell)),
 \end{align}
-其中$\epsilon$为每个像素的最大扰动值，$\bm{\theta}$为神经网络的参数，$\nabla_{\bm{I}_c} \mathcal{L} (\bm{\theta}, \bm{I}_c, \ell)$为损失函数基于输入图像的梯度。利用反向传播算法，对抗样本生成的开销很小。使用符号函数是因为该算法是在$\ell_\infty$的范数下进行优化。\citet{goodfellow2015explaining}使用在损失函数附近的线性近似来得到对抗样本效果不错，说明神经网络的局部可能没有我们所想象的那样非线性。
+其中$\epsilon$为每个像素的最大扰动值，$\bm{\theta}$为神经网络的参数，$\nabla_{\bm{I}_c} \mathcal{L} (\bm{\theta}, \bm{I}_c, \ell)$为损失函数基于输入图像的梯度。利用反向传播算法，对抗样本生成的开销很小。使用符号函数是因为该算法是在$\ell_\infty$的范数下进行优化。\citet{goodfellow2015explaining}使用在损失函数附近的线性近似来得到对抗样本效果不错，提出了一个神经网络的局部可能没有我们所想象的那样非线性的假设。但这个假设未经进一步证实，并且受到了一些质疑\cite{tanay2016boundary}。
 
 以上所谈到的都是单步算法，即只对输入图像进行一次扰动的算法。\citet{kurakin2016adversarial}提出了基于Projected Gradient Descent的Basic Iterative Method:
 \begin{align}
@@ -40,25 +40,74 @@
 
 \section{对抗样本防御}
 
+针对对抗样本的防御措施可以简要分为两类。一类是在修改训练或者测试时的输入，另一类是修改网络结构或者重新训练。其中，第二类又可以分成异常检测（输入是否为对抗样本）和直接防御。
+
+在第一类算法中，最直接的想法就是如\cite{szegedy2014intriguing}\cite{goodfellow2015explaining}中一样，在训练的过程中加入对抗样本。将对抗样本作为一种正则化的手段，能在一定程度上减轻过拟合\cite{miyato2018virtual}。但这样的算法不仅在生成对抗样本时带来极大的开销\cite{szegedy2014intriguing}，也隐式地扩大的数据集，从而使得训练成本大大增加。同时，\citet{Moosavi-Dezfooli_2017_CVPR}还发现对抗训练并不能消除对抗样本的存在。
+此外，研究者也尝试使用JPEG压缩算法\cite{dziugaite2016study}、随机裁剪\cite{luo2015foveationbased}、随机重新调整大小并加以填充\cite{xie2017adversarial}来达到防御对抗样本的目的。
+
+\citet{papernot2016distillation}将Distillation机制\cite{hinton2015distilling}利用在防御中，即使用原网络的输出作为新网络（同原网络结构、算法等完全相同），认为这样能够一定程度上缓解过拟合现象，并从实验上验证新网络能有效抵抗对抗样本。不过该算法已经被\cite{carlini2017towards}攻破。
+
+类似的，\citet{CisseBGDU17}通过在损失函数中加入权重矩阵的最大奇异值的惩罚项，来有效降低神经网络损失函数的Lipschitz常数，从而使得损失函数更加平滑，对抗样本更不容易出现。 	
+
 \vspace{\baselineskip}
 {\let\clearpage\relax \chapter{研究内容与解决方案}}
 
 \section{研究目标}
 
+结合小样本学习、迁移学习、元学习方面的工作，改进现有的黑盒攻击算法，提高对抗样本的可迁移性。具体来说，就是在保证较高成功率的情况下，生成更加难以察觉的对抗样本，或者减少问询次数、降低所需计算资源。
+
 \section{研究内容}
 
+本项目主要由以下几个任务组成：
+\begin{enumerate}
+\item 对黑盒攻击这一子领域进行文献搜索与阅读，了解最新的研究成果，并且完成一个对这个子领域的简单综述报告。
+\item 对小样本学习、迁移学习和元学习领域进行适当涉猎，了解比较有代表性的工作，思考是否有可能借鉴其中的思想，来改善对抗样本的可迁移性。尝试提出一些对现有算法的改进。
+\item 深入了解tensorflow框架和cleverhans函数库，复现黑盒攻击领域最为先进的算法，通过亲自实验来了解其利弊（扰动是否过大、是否需要过多问询次数、是否训练时间过长等等），从而思考可以改进的地方。
+\item 将2、3两步所得到的初步结论综合，提出一些可能的改进算法。然后实现这些算法，根据实验结果逐步修正自己的想法，并提出最终的模型。
+\item 实现最终模型，并进行细致的分析，希望从中能得到一些关于神经网络、对抗样本或者黑盒攻击的新见解。
+\end{enumerate}
+
 \section{技术方案}
+
+在Google Cloud上搭建VM Instance，利用Google Cloud提供的计算资源进行实验。熟练使用Google官方提供的Cleverhans函数库，以及原作者开源的代码库进行实验。
+
+拟使用MNIST\cite{lecun1998mnist}、CIFAR-10\cite{cifar10}、SVHN\cite{netzer2011reading}等小规模数据集进行初步实验。
 
 \vspace{\baselineskip}
 {\let\clearpage\relax \chapter{研究难点}}
 
+神经网络仍缺乏较好的数学支撑。研究者们现在暂时只能在一些非常简单的模型上（如深层线性网络）进行一些理论建模和证明。而对实际使用的高度非线性网络（如ResNet）暂时没有任何方法分析。就连网络中的某一个成分，例如Batch Normalization，暂时都没有很好的解释与分析。
+
+因此，现阶段的工作暂时局限于根据直觉进行实验，从而得到一些结论，再提出猜想和假设并进行验证的流程。这一过程中，得到的结论是否正确，能否根据假设和猜想设计合理的实验来验证，需要深刻的思考与试错。
+
+就这一领域而言，对抗样本为什么会存在仍然是个未解之谜。\citet{goodfellow2015explaining}提出了神经网络局部线性的假设，但这一假设未经进一步证实，并且与不少学者的实验结果相悖。此外，对抗样本的可迁移性也是另一大难题，现在几乎没有任何工作能较好的解释这一现象。
+
 \vspace{\baselineskip}
 {\let\clearpage\relax \chapter{预期结果}}
 
+希望能够得到一个在保证较高攻击成功率下，大幅减少对目标模型问询次数、减小所需扰动的黑盒攻击算法。如果能得到这样一个算法，则进一步进行分析，找出算法中真正起作用的成分，希望能以此加深对神经网络这一强力工具的理解。
+
+
 \vspace{\baselineskip}
 {\let\clearpage\relax \chapter{进度安排}}
-\begin{tabular}{|l|l|}
-\hline
-a & b \\
-\hline
-\end{tabular}
+\begin{center}
+	\begin{tabular}{| m{0.35\textwidth} | m{0.6\textwidth}|}
+	\hline
+	2018年10月 - 2018年11月 & 进行开题准备，了解对抗样本这一领域内比较有代表性的工作，对整个领域有一定了解 \\
+	\hline
+	2018年11月 - 2018年12月 & 对黑盒攻击与防御这一子领域进行深入了解 \\
+	\hline
+	2018年12月 - 2019年 1月 & 对小样本学习、迁移学习、元学习这一领域进行深入了解 \\
+	\hline
+	2019年 1月 - 2019年 2月 & 复现领域内最新的成果，从而深刻理解各种算法的利弊，并提出一系列改进措施 \\
+	\hline
+	2019年 2月 - 2019年 3月 & 实现自己的改进方案，并逐步修正自己的想法 \\
+	\hline 
+	2019年 3月 - 2019年 4月 & 整理已有的实验结果并进行分析，完成中期答辩 \\
+	\hline 
+	2019年 4月 - 2019年 5月 & 完善最终算法和模型，完成毕业设计初稿 \\
+	\hline
+	2019年 5月 - 2019年 6月 & 完成毕业设计终稿以及毕设答辩。 \\
+	\hline
+	\end{tabular}
+\end{center}

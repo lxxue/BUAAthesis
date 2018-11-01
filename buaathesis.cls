@@ -146,7 +146,7 @@ The LaTeX template for thesis of BUAA]
 \renewcommand{\contentsname}{\heiti\zihao{-2}\bfseries 目\qquad 录}
 \renewcommand\listfigurename{\heiti\zihao{-2}\bfseries 插\ 图\ 目\ 录}
 \renewcommand\listtablename{\heiti\zihao{-2}\bfseries 表\ 格\ 目\ 录}
-\renewcommand\bibname{参\ 考\ 文\ 献}
+\renewcommand\bibname{参考文献}
 \renewcommand{\figurename}{图}
 \renewcommand{\tablename}{表}
 
@@ -520,7 +520,7 @@ The LaTeX template for thesis of BUAA]
             \begin{center}
                 \includegraphics[width=360bp]{figure/buaaname.eps}
                 \vskip 45bp
-                \centerline{\zihao{-0}\heiti 毕业设计(论文)}
+                \centerline{\zihao{1}\heiti 毕业设计(论文)开题报告}
                 ~~\\
                 \vspace*{\stretch{4}}
                 \begin{minipage}[h]{.8\textwidth}
@@ -537,16 +537,18 @@ The LaTeX template for thesis of BUAA]
                     \ifbuaa@twoteacher
                         \begin{tabular}{cc}
                             学~~~院~~~名~~~称~~&\ulinecvcbc{\buaa@school 学院}\\[.4ex]
-                            专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major 专业}\\[.4ex]
+                            专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major}\\[.4ex]
                             学~~~生~~~姓~~~名~~&\ulinecvcbc{\buaa@thesisauthor}\\[.4ex]
-                            指~~~导~~~教~~~师~~&\ulinecvcbc{\buaa@teacher \quad \buaa@subteacher}\\
+                            校~内~指~导~教~师~~&\ulinecvcbc{\buaa@teacher \quad \buaa@subteacher}\\
                         \end{tabular}
                     \else
                         \begin{tabular}{cc}
                             学~~~院~~~名~~~称~~&\ulinecvcbc{\buaa@school}\\[.4ex]
-                            专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major 专业}\\[.4ex]
+                            专~~~业~~~名~~~称~~&\ulinecvcbc{\buaa@major}\\[.4ex]
                             学~~~生~~~姓~~~名~~&\ulinecvcbc{\buaa@thesisauthor}\\[.4ex]
-                            指~~~导~~~教~~~师~~&\ulinecvcbc{\buaa@teacher}\\
+                            校~内~指~导~教~师~~&\ulinecvcbc{\buaa@teacher}\\[.4ex]
+                            校~外~指~导~教~师~~&\ulinecvcbc{\buaa@newteacher}\\[.4ex]
+                            校~外~指~导~单~位~~&\ulinecvcbc{\buaa@newuni}\\
                         \end{tabular}
                     \fi
                 }
@@ -1060,12 +1062,26 @@ The LaTeX template for thesis of BUAA]
     \def\buaa@thesisauthor{#1}
     \def\buaa@thesisauthoreng{#2}
 }
-% 指导老师
+% 校内指导老师
 \def\buaa@teacher{}
 \def\buaa@teachereng{}
 \newcommand{\teacher}[2]{%
     \def\buaa@teacher{#1}
     \def\buaa@teachereng{#2}
+}
+% 校外指导老师
+\def\buaa@newteacher{}
+\def\buaa@newteachereng{}
+\newcommand{\newteacher}[2]{%
+    \def\buaa@newteacher{#1}
+    \def\buaa@newteachereng{#2}
+}
+% 校外指导单位
+\def\buaa@newuni{}
+\def\buaa@newunieng{}
+\newcommand{\newuni}[2]{%
+    \def\buaa@newuni{#1}
+    \def\buaa@newunieng{#2}
 }
 % 副指导老师
 \def\buaa@subteacher{}
